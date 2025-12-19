@@ -48,7 +48,7 @@ npm start
 
 ## Entity Relationship Diagram
 
-![ER Diagram](image.png)
+![ER Diagram](ER-Diagram.png)
 
 ## Security
 
