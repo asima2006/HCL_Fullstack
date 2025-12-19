@@ -55,19 +55,18 @@ healthcare-portal/
     └── package.json
 ```
 
-## Database Schema
+## 📊 Database ER Diagram – Healthcare Wellness Portal
 
-// ER DIAGRAM CODE – HEALTHCARE WELLNESS PORTAL
-
+```dbml
 Table User {
   user_id int [pk, increment]
   email varchar [unique, not null]
   password_hashed varchar [not null]
-  role varchar // 'patient' or 'doctor'
+  role varchar
   name varchar
-  allergies text // patient only
-  medications text // patient only
-  specialty varchar // doctor only
+  allergies text
+  medications text
+  specialty varchar
   consent_given boolean
   consent_date datetime
   created_at datetime
@@ -76,8 +75,8 @@ Table User {
 Table DoctorAvailability {
   availability_id int [pk, increment]
   doctor_id int [ref: > User.user_id]
-  day_of_week int // 0-6
-  slot_time varchar // "09:00", "10:00", ...
+  day_of_week int
+  slot_time varchar
 }
 
 Table Appointment {
@@ -86,17 +85,17 @@ Table Appointment {
   doctor_id int [ref: > User.user_id]
   date date
   time varchar
-  status varchar // scheduled, completed, cancelled
+  status varchar
 }
 
 Table WellnessGoal {
   goal_id int [pk, increment]
   patient_id int [ref: > User.user_id]
-  type varchar // steps, water, sleep, checkup
+  type varchar
   title varchar
   target_value int
-  unit varchar // steps, ml, hours, etc.
-  status varchar // active, completed, missed
+  unit varchar
+  status varchar
   created_at datetime
 }
 
@@ -112,16 +111,18 @@ Table GoalLog {
 Table AuditLog {
   audit_id int [pk, increment]
   user_id int [ref: > User.user_id]
-  action varchar // VIEW_PATIENT, UPDATE_GOAL, etc.
-  resource_id varchar // e.g. "patient:123", "goal:456"
+  action varchar
+  resource_id varchar
   timestamp datetime
   ip_address varchar
 }
 
+```
+
 ## API Endpoints
 
 ### Auth (Public)
-```
+
 POST /api/auth/register
 Body: { email, password, name, role, consentGiven: true }
 
