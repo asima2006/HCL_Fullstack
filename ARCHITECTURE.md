@@ -57,75 +57,66 @@ healthcare-portal/
 
 ## Database Schema
 
-```javascript
-// User
-{
-  _id: ObjectId,
-  email: String (unique),
-  password: String (hashed),
-  role: "patient" | "doctor",
-  name: String,
-  // Patient-specific
-  allergies: String,
-  medications: String,
-  // Doctor-specific
-  specialty: String,
-  // Privacy
-  consentGiven: Boolean,
-  consentDate: Date,
-  createdAt: Date
+// ER DIAGRAM CODE – HEALTHCARE WELLNESS PORTAL
+
+Table User {
+  user_id int [pk, increment]
+  email varchar [unique, not null]
+  password_hashed varchar [not null]
+  role varchar // 'patient' or 'doctor'
+  name varchar
+  allergies text // patient only
+  medications text // patient only
+  specialty varchar // doctor only
+  consent_given boolean
+  consent_date datetime
+  created_at datetime
 }
 
-// DoctorAvailability (pre-seeded for 5 doctors)
-{
-  _id: ObjectId,
-  doctorId: ObjectId (ref: User),
-  dayOfWeek: Number (0-6),
-  slots: ["09:00", "10:00", "11:00", "14:00", "15:00"]
+Table DoctorAvailability {
+  availability_id int [pk, increment]
+  doctor_id int [ref: > User.user_id]
+  day_of_week int // 0-6
+  slot_time varchar // "09:00", "10:00", ...
 }
 
-// Appointment
-{
-  _id: ObjectId,
-  patientId: ObjectId (ref: User),
-  doctorId: ObjectId (ref: User),
-  date: Date,
-  time: String,
-  status: "scheduled" | "completed" | "cancelled"
+Table Appointment {
+  appointment_id int [pk, increment]
+  patient_id int [ref: > User.user_id]
+  doctor_id int [ref: > User.user_id]
+  date date
+  time varchar
+  status varchar // scheduled, completed, cancelled
 }
 
-// WellnessGoal (set by patient)
-{
-  _id: ObjectId,
-  patientId: ObjectId (ref: User),
-  type: "steps" | "water" | "sleep" | "checkup",
-  title: String,
-  target: Number,
-  unit: String,
-  status: "active" | "completed" | "missed",
-  createdAt: Date
+Table WellnessGoal {
+  goal_id int [pk, increment]
+  patient_id int [ref: > User.user_id]
+  type varchar // steps, water, sleep, checkup
+  title varchar
+  target_value int
+  unit varchar // steps, ml, hours, etc.
+  status varchar // active, completed, missed
+  created_at datetime
 }
 
-// GoalLog (daily patient entries)
-{
-  _id: ObjectId,
-  patientId: ObjectId (ref: User),
-  goalId: ObjectId (ref: WellnessGoal),
-  date: Date,
-  value: Number,
-  createdAt: Date
+Table GoalLog {
+  log_id int [pk, increment]
+  patient_id int [ref: > User.user_id]
+  goal_id int [ref: > WellnessGoal.goal_id]
+  date date
+  value int
+  created_at datetime
 }
 
-// AuditLog (HIPAA compliance)
-{
-  _id: ObjectId,
-  userId: ObjectId (ref: User),
-  action: String,         // "VIEW_PATIENT", "UPDATE_GOAL", etc.
-  resource: String,       // "patient:123", "goal:456"
-  timestamp: Date,
-  ipAddress: String
+Table AuditLog {
+  audit_id int [pk, increment]
+  user_id int [ref: > User.user_id]
+  action varchar // VIEW_PATIENT, UPDATE_GOAL, etc.
+  resource_id varchar // e.g. "patient:123", "goal:456"
+  timestamp datetime
+  ip_address varchar
 }
-```
 
 ## API Endpoints
 
