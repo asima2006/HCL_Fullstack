@@ -2,6 +2,8 @@
 
 ## Project Structure
 
+![Simplified Architecture](archietecture.jpeg)
+
 ```
 healthcare-portal/
 ├── backend/
